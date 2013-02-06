@@ -12,7 +12,6 @@ import me.qmx.jitescript.CodeBlock;
 import me.qmx.jitescript.JDKVersion;
 import me.qmx.jitescript.JiteClass;
 import static me.qmx.jitescript.util.CodegenUtils.*;
-import org.junit.Test;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 
@@ -20,9 +19,12 @@ public class SimpleBinding {
 
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
-    @Test
-    public void simpleIndy() throws Throwable {
+    public static void main(String[] args) throws Throwable {
+        simpleBinding();
+        mutableCallSite();
+    }
 
+    public static void simpleBinding() throws Throwable {
         final Handle asmHandle = new Handle(
                 Opcodes.H_INVOKESTATIC,
                 p(SimpleBinding.class),
@@ -59,8 +61,7 @@ public class SimpleBinding {
         return result;
     }
 
-    @Test
-    public void mutableCallSite() throws Throwable {
+    public static void mutableCallSite() throws Throwable {
 
         final Handle asmHandle = new Handle(
                 Opcodes.H_INVOKESTATIC,
@@ -124,7 +125,7 @@ public class SimpleBinding {
         System.out.println("second!");
     }
 
-    private Runnable newRunnable(String name, final CodeBlock codeBlock) throws Exception {
+    private static Runnable newRunnable(String name, final CodeBlock codeBlock) throws Exception {
         byte[] bytes = new JiteClass("SimpleIndy", p(Object.class), new String[]{p(Runnable.class)}) {
             {
                 defineDefaultConstructor();
@@ -134,7 +135,7 @@ public class SimpleBinding {
             }
         }.toBytes(JDKVersion.V1_7);
 
-        Class cls = new ClassLoader(getClass().getClassLoader()) {
+        Class cls = new ClassLoader(SimpleBinding.class.getClassLoader()) {
             public Class defineClass(String name, byte[] bytes) {
                 return super.defineClass(name, bytes, 0, bytes.length);
             }

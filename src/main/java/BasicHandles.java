@@ -6,21 +6,19 @@ import java.lang.invoke.MethodType;
 import static java.lang.invoke.MethodType.*;
 import java.lang.invoke.SwitchPoint;
 import java.util.Random;
-import org.junit.Test;
 
 public class BasicHandles {
 
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static final MethodHandles.Lookup PUBLOOKUP = MethodHandles.publicLookup();
 
-    @Test
-    public void basics() throws Throwable {
+    public static void main(String[] args) throws Throwable {
 
         // method invocation
 
         // example Java
-        String value1 = System.getProperty("java.home");
-        System.out.println("Hello, world");
+        // String value1 = System.getProperty("java.home");
+        // System.out.println("Hello, world");
 
         // getProperty signature
         MethodType type1 = MethodType.methodType(String.class, String.class);
@@ -32,13 +30,13 @@ public class BasicHandles {
         MethodHandle printlnMH = LOOKUP
                 .findVirtual(PrintStream.class, "println", type2);
 
-        value1 = (String) getPropertyMH.invoke("java.home");
-        printlnMH.invoke(System.out, (Object) "Hello, world");
+//        value1 = (String) getPropertyMH.invoke("java.home");
+//        printlnMH.invoke(System.out, (Object) "Hello, world");
 
         // field get
 
         // example Java
-        PrintStream out1 = System.out;
+        // PrintStream out1 = System.out;
 
         MethodHandle systemOutMH = LOOKUP
                 .findStaticGetter(System.class, "out", PrintStream.class);
@@ -48,18 +46,17 @@ public class BasicHandles {
         // field set
 
         class MyStruct {
-
             public String name;
         }
 
         // example Java
-        MyStruct ms = new MyStruct();
-        ms.name = "Mattias";
+        // MyStruct ms = new MyStruct();
+        // ms.name = "Mattias";
 
         MethodHandle nameSetter = LOOKUP
                 .findSetter(MyStruct.class, "name", String.class);
 
-        nameSetter.invoke(ms, "Charles");
+//        nameSetter.invoke(ms, "Charles");
 
         // insert
 
@@ -68,19 +65,19 @@ public class BasicHandles {
         MethodHandle systemOutPrintlnMH =
                 MethodHandles.insertArguments(printlnMH, 0, System.out);
 
-        // same as getProperty("java.home")
-        getJavaHomeMH.invokeWithArguments();
-        // same as System.out.println(...
-        systemOutPrintlnMH.invokeWithArguments("Hello, world");
+//        // same as getProperty("java.home")
+//        getJavaHomeMH.invokeWithArguments();
+//        // same as System.out.println(...
+//        systemOutPrintlnMH.invokeWithArguments("Hello, world");
 
         // filter
 
         // example Java
-        class UpperCasifier {
-            public String call(String inputString) {
-                return inputString.toUpperCase();
-            }
-        }
+        // class UpperCasifier {
+        //     public String call(String inputString) {
+        //         return inputString.toUpperCase();
+        //     }
+        // }
 
         // pointer to String.toUpperCase
         MethodHandle toUpperCaseMH = LOOKUP.findVirtual(
@@ -97,21 +94,21 @@ public class BasicHandles {
                 filterArguments(systemOutPrintlnMH, 0, objectToUpperCaseMH);
 
         // prints out "THIS WILL BE UPCASED
-        upcasePrintlnMH.invokeWithArguments("this will be upcased");
+//        upcasePrintlnMH.invokeWithArguments("this will be upcased");
 
         // boolean branch
 
         // example Java
-        class UpperDowner {
-
-            public String call(String inputString) {
-                if ((System.currentTimeMillis() % 2) == 0) {
-                    return inputString.toUpperCase();
-                } else {
-                    return inputString.toLowerCase();
-                }
-            }
-        }
+        // class UpperDowner {
+        //     private static final Random RANDOM = ...
+        //     public String call(String inputString) {
+        //         if (RANDOM.nextBoolean()) {
+        //             return inputString.toUpperCase();
+        //         } else {
+        //             return inputString.toLowerCase();
+        //         }
+        //     }
+        // }
 
         // pointer to String.toLowerCase
         MethodHandle toLowerCaseMH = LOOKUP.findVirtual(
@@ -140,26 +137,40 @@ public class BasicHandles {
                 upperDowner.asType(methodType(Object.class, Object.class)));
 
         // depending on random boolean, upcases or downcases "Hello, world"
-        upperDownerPrinter.invoke("Hello, world");
-        upperDownerPrinter.invoke("Hello, world");
-        upperDownerPrinter.invoke("Hello, world");
-        upperDownerPrinter.invoke("Hello, world");
-        upperDownerPrinter.invoke("Hello, world");
+//        upperDownerPrinter.invoke("Hello, world");
+//        upperDownerPrinter.invoke("Hello, world");
+//        upperDownerPrinter.invoke("Hello, world");
+//        upperDownerPrinter.invoke("Hello, world");
+//        upperDownerPrinter.invoke("Hello, world");
 
         // switch branch
+        
+        // example Java
+        // class UpperDownerSwitch {
+        //     private volatile boolean on = true;
+        //     public String call(String inputString) {
+        //         if (on) {
+        //             return inputString.toUpperCase();
+        //         } else {
+        //             return inputString.toLowerCase();
+        //         }
+        //     }
+        //
+        //     public void turnOff() {
+        //         on = false;
+        //     }
+        // }
 
         SwitchPoint upperLowerSwitch = new SwitchPoint();
 
         MethodHandle upperLower =
                 upperLowerSwitch.guardWithTest(toUpperCaseMH, toLowerCaseMH);
-
-        upperLower.invoke("MyString"); // => "MYSTRING"
-        upperLower.invoke("MyOtherString"); // => "MYOTHERSTRING"
-        SwitchPoint.invalidateAll(new SwitchPoint[]{upperLowerSwitch});
-        upperLower.invoke("MyString"); // => "mystring"
+//        upperLower.invoke("MyString"); // => "MYSTRING"
+//        upperLower.invoke("MyOtherString"); // => "MYOTHERSTRING"
+//        SwitchPoint.invalidateAll(new SwitchPoint[]{upperLowerSwitch});
+//        upperLower.invoke("MyString"); // => "mystring"
     }
-    
-    private static final Random RANDOM = new Random(System.currentTimeMillis());
+    private static final Random RANDOM = new Random(System.currentTimeMillis());    
     
     public static boolean randomBoolean() {
         return RANDOM.nextBoolean();
