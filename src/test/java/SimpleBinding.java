@@ -1,4 +1,3 @@
-
 import com.headius.invokebinder.Binder;
 import java.lang.invoke.CallSite;
 import java.lang.invoke.ConstantCallSite;
@@ -17,7 +16,7 @@ import org.junit.Test;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 
-public class SimpleIndy {
+public class SimpleBinding {
 
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
@@ -26,7 +25,7 @@ public class SimpleIndy {
 
         final Handle asmHandle = new Handle(
                 Opcodes.H_INVOKESTATIC,
-                p(SimpleIndy.class),
+                p(SimpleBinding.class),
                 "simpleBootstrap",
                 sig(CallSite.class, MethodHandles.Lookup.class, String.class, MethodType.class));
 
@@ -48,7 +47,7 @@ public class SimpleIndy {
 
         // Create and bind a constant site, pointing at the named method
         return new ConstantCallSite(
-                lookup.findStatic(SimpleIndy.class, name, type));
+                lookup.findStatic(SimpleBinding.class, name, type));
 
     }
     
@@ -65,7 +64,7 @@ public class SimpleIndy {
 
         final Handle asmHandle = new Handle(
                 Opcodes.H_INVOKESTATIC,
-                p(SimpleIndy.class),
+                p(SimpleBinding.class),
                 "mutableCallSiteBootstrap",
                 sig(CallSite.class, MethodHandles.Lookup.class, String.class, MethodType.class));
 
@@ -87,7 +86,7 @@ public class SimpleIndy {
 
         // look up the first method to call
         MethodHandle target = lookup.findStatic(
-                SimpleIndy.class,
+                SimpleBinding.class,
                 name,
                 methodType(void.class, Lookup.class, MutableCallSite.class));
 
@@ -97,7 +96,7 @@ public class SimpleIndy {
         // The same thing with InvokeBinder
         target = Binder.from(void.class)
                 .insert(0, lookup, mcs)
-                .invokeStatic(lookup, SimpleIndy.class, name);
+                .invokeStatic(lookup, SimpleBinding.class, name);
 
         mcs.setTarget(target);
 
@@ -108,7 +107,7 @@ public class SimpleIndy {
         // Look up "second" method and add Lookup and MutableCallSite
         MethodHandle second = Binder.from(void.class)
                 .insert(0, lookup, mcs)
-                .invokeStatic(lookup, SimpleIndy.class, "second");
+                .invokeStatic(lookup, SimpleBinding.class, "second");
 
         mcs.setTarget(second);
 
@@ -118,7 +117,7 @@ public class SimpleIndy {
     public static void second(MethodHandles.Lookup lookup, MutableCallSite mcs) throws Exception {
         MethodHandle second = Binder.from(void.class)
                 .insert(0, LOOKUP, mcs)
-                .invokeStatic(LOOKUP, SimpleIndy.class, "first");
+                .invokeStatic(LOOKUP, SimpleBinding.class, "first");
 
         mcs.setTarget(second);
 

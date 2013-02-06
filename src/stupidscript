@@ -1,6 +1,6 @@
 def0 goodbye
 push print
-push Goodxxxbye, world
+push Goodbye, world
 send 1
 end
 

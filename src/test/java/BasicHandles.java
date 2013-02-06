@@ -1,4 +1,3 @@
-
 import java.io.PrintStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -6,6 +5,7 @@ import static java.lang.invoke.MethodHandles.*;
 import java.lang.invoke.MethodType;
 import static java.lang.invoke.MethodType.*;
 import java.lang.invoke.SwitchPoint;
+import java.util.Random;
 import org.junit.Test;
 
 public class BasicHandles {
@@ -75,8 +75,8 @@ public class BasicHandles {
 
         // filter
 
-        class Upper {
-
+        // example Java
+        class UpperCasifier {
             public String call(String inputString) {
                 return inputString.toUpperCase();
             }
@@ -139,7 +139,7 @@ public class BasicHandles {
                 0,
                 upperDowner.asType(methodType(Object.class, Object.class)));
 
-        // depending on ms time, upcases or downcases "Hello, world"
+        // depending on random boolean, upcases or downcases "Hello, world"
         upperDownerPrinter.invoke("Hello, world");
         upperDownerPrinter.invoke("Hello, world");
         upperDownerPrinter.invoke("Hello, world");
@@ -157,5 +157,11 @@ public class BasicHandles {
         upperLower.invoke("MyOtherString"); // => "MYOTHERSTRING"
         SwitchPoint.invalidateAll(new SwitchPoint[]{upperLowerSwitch});
         upperLower.invoke("MyString"); // => "mystring"
+    }
+    
+    private static final Random RANDOM = new Random(System.currentTimeMillis());
+    
+    public static boolean randomBoolean() {
+        return RANDOM.nextBoolean();
     }
 }
