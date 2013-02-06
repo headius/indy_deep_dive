@@ -1,5 +1,5 @@
 import com.headius.invokebinder.Binder;
-import me.qmx.internal.org.objectweb.asm.Handle;
+import org.objectweb.asm.Handle;
 import me.qmx.jitescript.CodeBlock;
 import me.qmx.jitescript.JDKVersion;
 import me.qmx.jitescript.JiteClass;
@@ -19,12 +19,14 @@ import java.util.Arrays;
 
 import static me.qmx.jitescript.util.CodegenUtils.*;
 
-public class Demo1 {
+public class LongExamples {
     @Test
     public void simpleExample() throws Throwable {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
 
-        String value1 = System.getProperty("foo");
+        // method invocation
+
+        String value1 = System.getProperty("java.home");
 
         MethodHandle m1 = lookup
                 .findStatic(System.class, "getProperty", MethodType.methodType(String.class, String.class));
@@ -32,7 +34,9 @@ public class Demo1 {
         MethodHandle m2 = Binder.from(String.class, String.class)
                 .invokeStatic(lookup, System.class, "getProperty");
 
-        String value2 = (String)m2.invoke("foo");
+        String value2 = (String)m2.invoke("java.home");
+
+        // field get
 
         PrintStream out1 = System.out;
 
@@ -43,6 +47,8 @@ public class Demo1 {
                 .getStatic(lookup, System.class, "out");
 
         PrintStream out2 = (PrintStream)m4.invoke();
+
+        // field set
 
         class MyStruct {
             public String name;
@@ -72,20 +78,20 @@ public class Demo1 {
         // drop
 
         MethodHandle m9 = lookup
-                .findStatic(Demo1.class, "twoArgs",
+                .findStatic(LongExamples.class, "twoArgs",
                         MethodType.methodType(String.class, String.class, String.class));
         m9 = MethodHandles.dropArguments(m9, 2, String.class);
 
         MethodHandle m10 = Binder.from(String.class, String.class, String.class, String.class)
                 .drop(2)
-                .invokeStatic(lookup, Demo1.class, "twoArgs");
+                .invokeStatic(lookup, LongExamples.class, "twoArgs");
 
         m10.invoke("one", "two", "three"); // => "[one,two]"
 
         // permute
 
         MethodHandle m11 = lookup
-                .findStatic(Demo1.class, "twoArgs",
+                .findStatic(LongExamples.class, "twoArgs",
                         MethodType.methodType(String.class, String.class, String.class));
         m11 = MethodHandles.permuteArguments(
                 m11,
@@ -94,17 +100,17 @@ public class Demo1 {
 
         MethodHandle m12 = Binder.from(String.class, String.class, String.class, int.class)
                 .permute(1, 0)
-                .invokeStatic(lookup, Demo1.class, "initials");
+                .invokeStatic(lookup, LongExamples.class, "initials");
 
         m12.invoke("one", "two", 3); // => "[two,one]"
 
         // fold
 
         MethodHandle m13 = lookup
-                .findStatic(Demo1.class, "threeArgs",
+                .findStatic(LongExamples.class, "threeArgs",
                         MethodType.methodType(String.class, String.class, String.class, String.class));
         MethodHandle combiner = lookup
-                .findStatic(Demo1.class, "initials",
+                .findStatic(LongExamples.class, "initials",
                         MethodType.methodType(String.class, String.class, String.class));
         m13 = MethodHandles.foldArguments(m13, combiner);
 
@@ -112,54 +118,54 @@ public class Demo1 {
                 .fold(
                         Binder
                                 .from(String.class, String.class, String.class)
-                                .invokeStatic(lookup, Demo1.class, "initials")
+                                .invokeStatic(lookup, LongExamples.class, "initials")
                 )
-                .invokeStatic(lookup, Demo1.class, "threeArgs");
+                .invokeStatic(lookup, LongExamples.class, "threeArgs");
 
         m14.invoke("Charles", "Nutter"); // => ["CN", "Charles", "Nutter"]
 
         // filter
 
         MethodHandle m15 = lookup
-                .findStatic(Demo1.class, "twoArgs",
+                .findStatic(LongExamples.class, "twoArgs",
                         MethodType.methodType(String.class, String.class, String.class));
         MethodHandle filter = lookup
-                .findStatic(Demo1.class, "upcase",
+                .findStatic(LongExamples.class, "upcase",
                         MethodType.methodType(String.class, String.class));
         m15 = MethodHandles.filterArguments(m15, 0, filter, filter);
 
         MethodHandle m16 = Binder.from(String.class, String.class, String.class)
                 .filter(0,
                         Binder.from(String.class, String.class)
-                                .invokeStatic(lookup, Demo1.class, "upcase")
+                                .invokeStatic(lookup, LongExamples.class, "upcase")
                 )
-                .invokeStatic(lookup, Demo1.class, "twoArgs");
+                .invokeStatic(lookup, LongExamples.class, "twoArgs");
 
         m16.invoke("hello", "world"); // => ["HELLO", "WORLD"]
 
         // spread
 
         MethodHandle m17 = lookup
-                .findStatic(Demo1.class, "threeArgs",
+                .findStatic(LongExamples.class, "threeArgs",
                         MethodType.methodType(String.class, String.class, String.class, String.class));
         m17 = m17.asSpreader(String[].class, 3);
 
         MethodHandle m18 = Binder.from(String.class, String[].class)
                 .spread(String.class, String.class, String.class)
-                .invokeStatic(lookup, Demo1.class, "threeArgs");
+                .invokeStatic(lookup, LongExamples.class, "threeArgs");
 
         m18.invoke("a,b,c".split(",")); // => ["a", "b", "c"]
 
         // collect
 
         MethodHandle m19 = lookup
-                .findStatic(Demo1.class, "nameAndNicknames",
+                .findStatic(LongExamples.class, "nameAndNicknames",
                         MethodType.methodType(String.class, String.class, String[].class));
         m19.asCollector(String[].class, 2);
 
         MethodHandle m20 = Binder.from(String.class, String.class, String.class, String.class)
                 .collect(1, String[].class)
-                .invokeStatic(lookup, Demo1.class, "nameAndNicknames");
+                .invokeStatic(lookup, LongExamples.class, "nameAndNicknames");
 
         m20.invoke("Charles", "Charlie", "headius");
             // => "Charles aka ["Charlie", "headius"]"
@@ -170,15 +176,15 @@ public class Demo1 {
                 .branch(
                         Binder.from(boolean.class, int.class, String.class)
                                 .drop(1)
-                                .invokeStatic(lookup, Demo1.class, "upOrDown"),
+                                .invokeStatic(lookup, LongExamples.class, "upOrDown"),
 
                         Binder.from(String.class, int.class, String.class)
                                 .drop(0)
-                                .invokeStatic(lookup, Demo1.class, "upcase"),
+                                .invokeStatic(lookup, LongExamples.class, "upcase"),
 
                         Binder.from(String.class, int.class, String.class)
                                 .drop(0)
-                                .invokeStatic(lookup, Demo1.class, "downcase")
+                                .invokeStatic(lookup, LongExamples.class, "downcase")
                 );
 
         m21.invoke(1, "MyString"); // => "MYSTRING"
@@ -189,10 +195,10 @@ public class Demo1 {
         SwitchPoint sp1 = new SwitchPoint();
         MethodHandle m22 = sp1.guardWithTest(
                     Binder.from(String.class, String.class)
-                            .invokeStatic(lookup, Demo1.class, "upcase"),
+                            .invokeStatic(lookup, LongExamples.class, "upcase"),
 
                     Binder.from(String.class, String.class)
-                            .invokeStatic(lookup, Demo1.class, "downcase"));
+                            .invokeStatic(lookup, LongExamples.class, "downcase"));
 
         m22.invoke("MyString"); // => "MYSTRING"
         m22.invoke("MyOtherString"); // => "MYOTHERSTRING"
@@ -206,7 +212,7 @@ public class Demo1 {
                         NullPointerException.class,
                         Binder.from(String.class, NullPointerException.class, String.class)
                                 .drop(1)
-                                .invokeStatic(lookup, Demo1.class, "handleNPE")
+                                .invokeStatic(lookup, LongExamples.class, "handleNPE")
                 ).invokeStatic(lookup, System.class, "getProperty");
 
         m23.invoke("java.home"); // => works as normal
@@ -222,12 +228,12 @@ public class Demo1 {
             defineMethod("run", ACC_PUBLIC, sig(void.class), new CodeBlock() {{
                 invokedynamic("unused", sig(String.class),
                         new Handle(H_INVOKESTATIC,
-                                p(Demo1.class),
+                                p(LongExamples.class),
                                 "simpleBootstrap",
                                 sig(CallSite.class, MethodHandles.Lookup.class, String.class, MethodType.class)));
                 aprintln();
                 voidreturn();
-            }});
+            }   });
         }}.toBytes(JDKVersion.V1_7);
 
         Class cls = new ClassLoader(getClass().getClassLoader()) {
@@ -250,11 +256,11 @@ public class Demo1 {
             defineMethod("run", ACC_PUBLIC, sig(void.class), new CodeBlock() {{
                 invokedynamic("unused", sig(void.class),
                         new Handle(H_INVOKESTATIC,
-                                p(Demo1.class),
+                                p(LongExamples.class),
                                 "mutableCallSite",
                                 sig(CallSite.class, MethodHandles.Lookup.class, String.class, MethodType.class)));
                 voidreturn();
-            }});
+            }   });
         }}.toBytes(JDKVersion.V1_7);
 
         Class cls = new ClassLoader(getClass().getClassLoader()) {
@@ -294,7 +300,7 @@ public class Demo1 {
 
             defineMethod("run", ACC_PUBLIC, sig(void.class), new CodeBlock() {{
                 Handle dynlangBootstrap = new Handle(H_INVOKESTATIC,
-                        p(Demo1.class),
+                        p(LongExamples.class),
                         "dynlang",
                         sig(CallSite.class, MethodHandles.Lookup.class, String.class, MethodType.class));
 
@@ -310,7 +316,7 @@ public class Demo1 {
                 }
 
                 voidreturn();
-            }});
+            }   });
         }}.toBytes(JDKVersion.V1_7);
 
         Class cls = new ClassLoader(getClass().getClassLoader()) {
@@ -376,7 +382,7 @@ public class Demo1 {
 
         MethodHandle first = Binder.from(void.class)
                 .insert(0, lookup, mcs)
-                .invokeStatic(lookup, Demo1.class, "first");
+                .invokeStatic(lookup, LongExamples.class, "first");
 
         mcs.setTarget(first);
 
@@ -386,7 +392,7 @@ public class Demo1 {
     public static void first(MethodHandles.Lookup lookup, MutableCallSite mcs) throws Exception {
         MethodHandle second = Binder.from(void.class)
                 .insert(0, lookup, mcs)
-                .invokeStatic(lookup, Demo1.class, "second");
+                .invokeStatic(lookup, LongExamples.class, "second");
 
         mcs.setTarget(second);
 
@@ -396,7 +402,7 @@ public class Demo1 {
     public static void second(MethodHandles.Lookup lookup, MutableCallSite mcs) throws Exception {
         MethodHandle second = Binder.from(void.class)
                 .insert(0, lookup, mcs)
-                .invokeStatic(lookup, Demo1.class, "first");
+                .invokeStatic(lookup, LongExamples.class, "first");
 
         mcs.setTarget(second);
 
@@ -429,7 +435,7 @@ public class Demo1 {
 
         MethodHandle send = Binder.from(void.class, String.class)
                 .insert(0, lookup, mcs)
-                .invokeStatic(lookup, Demo1.class, "send");
+                .invokeStatic(lookup, LongExamples.class, "send");
 
         mcs.setTarget(send);
 
@@ -439,7 +445,7 @@ public class Demo1 {
     public static void send(MethodHandles.Lookup lookup, MutableCallSite mcs, String name) throws Throwable {
         MethodHandle foundMethod = Binder.from(void.class)
                 .drop(0)
-                .invokeStatic(lookup, Demo1.class, name);
+                .invokeStatic(lookup, LongExamples.class, name);
 
         mcs.setTarget(foundMethod);
     }

@@ -1,0 +1,8 @@
+def0 goodbye
+push print
+push Goodxxxbye, world
+send 1
+end
+
+push goodbye
+send 0
