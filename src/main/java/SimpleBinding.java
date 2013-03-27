@@ -20,7 +20,7 @@ public class SimpleBinding {
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     public static void main(String[] args) throws Throwable {
-        simpleBinding();
+//        simpleBinding();
         mutableCallSite();
     }
 

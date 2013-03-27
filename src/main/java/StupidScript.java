@@ -47,14 +47,14 @@ public class StupidScript {
 
         MethodHandle send = Binder.from(type)
                 .insert(0, lookup, mcs)
-                .invokeStatic(lookup, StupidScript.class, "send");
+                .invokeStatic(lookup, StupidScript.class, "sendImpl");
 
         mcs.setTarget(send);
 
         return mcs;
     }
 
-    public static void send(MethodHandles.Lookup lookup, MutableCallSite mcs, String name, Object self) throws Throwable {
+    public static void sendImpl(MethodHandles.Lookup lookup, MutableCallSite mcs, String name, Object self) throws Throwable {
         MethodHandle target = null;
 
         switch (name) {
@@ -80,7 +80,7 @@ public class StupidScript {
         target.invoke(name, self);
     }
 
-    public static void send(MethodHandles.Lookup lookup, MutableCallSite mcs, String name, String arg0, Object self) throws Throwable {
+    public static void sendImpl(MethodHandles.Lookup lookup, MutableCallSite mcs, String name, String arg0, Object self) throws Throwable {
         MethodHandle target = null;
 
         switch (name) {
@@ -113,15 +113,11 @@ public class StupidScript {
         public final List<Node> children;
 
         public Node(String op) {
-            this.op = op;
-            this.arg = null;
-            this.children = Collections.EMPTY_LIST;
+            this(op, null, Collections.EMPTY_LIST);
         }
 
         public Node(String op, String arg) {
-            this.op = op;
-            this.arg = arg;
-            this.children = Collections.EMPTY_LIST;
+            this(op, arg, Collections.EMPTY_LIST);
         }
 
         public Node(String op, String arg, List<Node> children) {

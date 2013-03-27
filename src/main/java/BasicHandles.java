@@ -30,7 +30,8 @@ public class BasicHandles {
         MethodHandle printlnMH = LOOKUP
                 .findVirtual(PrintStream.class, "println", type2);
 
-//        value1 = (String) getPropertyMH.invoke("java.home");
+        
+//        String value1 = (String) getPropertyMH.invoke("java.home");
 //        printlnMH.invoke(System.out, (Object) "Hello, world");
 
         // field get
@@ -165,10 +166,10 @@ public class BasicHandles {
 
         MethodHandle upperLower =
                 upperLowerSwitch.guardWithTest(toUpperCaseMH, toLowerCaseMH);
-//        upperLower.invoke("MyString"); // => "MYSTRING"
-//        upperLower.invoke("MyOtherString"); // => "MYOTHERSTRING"
-//        SwitchPoint.invalidateAll(new SwitchPoint[]{upperLowerSwitch});
-//        upperLower.invoke("MyString"); // => "mystring"
+        upperLower.invoke("MyString"); // => "MYSTRING"
+        upperLower.invoke("MyOtherString"); // => "MYOTHERSTRING"
+        SwitchPoint.invalidateAll(new SwitchPoint[]{upperLowerSwitch});
+        upperLower.invoke("MyString"); // => "mystring"
     }
     private static final Random RANDOM = new Random(System.currentTimeMillis());    
     
