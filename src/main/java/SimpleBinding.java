@@ -116,11 +116,11 @@ public class SimpleBinding {
     }
 
     public static void second(MethodHandles.Lookup lookup, MutableCallSite mcs) throws Exception {
-        MethodHandle second = Binder.from(void.class)
+        MethodHandle first = Binder.from(void.class)
                 .insert(0, LOOKUP, mcs)
                 .invokeStatic(LOOKUP, SimpleBinding.class, "first");
 
-        mcs.setTarget(second);
+        mcs.setTarget(first);
 
         System.out.println("second!");
     }

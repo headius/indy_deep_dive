@@ -31,8 +31,8 @@ public class BasicHandles {
                 .findVirtual(PrintStream.class, "println", type2);
 
         
-//        String value1 = (String) getPropertyMH.invoke("java.home");
-//        printlnMH.invoke(System.out, (Object) "Hello, world");
+        String value1 = (String) getPropertyMH.invoke("java.home");
+        printlnMH.invoke(System.out, (Object) "Hello, world");
 
         // field get
 
@@ -67,9 +67,9 @@ public class BasicHandles {
                 MethodHandles.insertArguments(printlnMH, 0, System.out);
 
 //        // same as getProperty("java.home")
-//        getJavaHomeMH.invokeWithArguments();
+        getJavaHomeMH.invokeWithArguments();
 //        // same as System.out.println(...
-//        systemOutPrintlnMH.invokeWithArguments("Hello, world");
+        systemOutPrintlnMH.invokeWithArguments("Hello, world");
 
         // filter
 
@@ -95,21 +95,21 @@ public class BasicHandles {
                 filterArguments(systemOutPrintlnMH, 0, objectToUpperCaseMH);
 
         // prints out "THIS WILL BE UPCASED
-//        upcasePrintlnMH.invokeWithArguments("this will be upcased");
+        upcasePrintlnMH.invokeWithArguments("this will be upcased");
 
         // boolean branch
 
         // example Java
-        // class UpperDowner {
-        //     private static final Random RANDOM = ...
-        //     public String call(String inputString) {
-        //         if (RANDOM.nextBoolean()) {
-        //             return inputString.toUpperCase();
-        //         } else {
-        //             return inputString.toLowerCase();
-        //         }
-        //     }
-        // }
+//         class UpperDowner {
+//             private static final Random RANDOM = ...
+//             public String call(String inputString) {
+//                 if (RANDOM.nextBoolean()) {
+//                     return inputString.toUpperCase();
+//                 } else {
+//                     return inputString.toLowerCase();
+//                 }
+//             }
+//         }
 
         // pointer to String.toLowerCase
         MethodHandle toLowerCaseMH = LOOKUP.findVirtual(
@@ -147,20 +147,20 @@ public class BasicHandles {
         // switch branch
         
         // example Java
-        // class UpperDownerSwitch {
-        //     private volatile boolean on = true;
-        //     public String call(String inputString) {
-        //         if (on) {
-        //             return inputString.toUpperCase();
-        //         } else {
-        //             return inputString.toLowerCase();
-        //         }
-        //     }
-        //
-        //     public void turnOff() {
-        //         on = false;
-        //     }
-        // }
+//         class UpperDownerSwitch {
+//             private volatile boolean on = true;
+//             public String call(String inputString) {
+//                 if (on) {
+//                     return inputString.toUpperCase();
+//                 } else {
+//                     return inputString.toLowerCase();
+//                 }
+//             }
+//        
+//             public void turnOff() {
+//                 on = false;
+//             }
+//         }
 
         SwitchPoint upperLowerSwitch = new SwitchPoint();
 
