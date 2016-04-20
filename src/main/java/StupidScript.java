@@ -14,7 +14,7 @@ import me.qmx.jitescript.CodeBlock;
 import me.qmx.jitescript.JDKVersion;
 import me.qmx.jitescript.JiteClass;
 import static me.qmx.jitescript.util.CodegenUtils.*;
-import org.objectweb.asm.Handle;
+import me.qmx.jitescript.internal.org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 
 public class StupidScript {
